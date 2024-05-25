@@ -247,7 +247,7 @@ function fetchWeather() {
             // Add current weather data
             const currentRow = document.createElement('tr');
             const currentData = [
-                new Date(currentWeather.time * 1000).toLocaleTimeString(),
+                currentWeather.time.toLocaleTimeString(),
                 currentWeather.temperature,
                 currentWeather.rain,
                 currentWeather.cloud_cover
@@ -284,7 +284,7 @@ function fetchWeather() {
             for (let i = 0; i < dailyWeather.time.length; i++) {
                 const forecastRow = document.createElement('tr');
                 const forecastData = [
-                    new Date(dailyWeather.time[i] * 1000).toLocaleDateString(),
+                    dailyWeather.time[i].toLocaleDateString(),
                     dailyWeather.temperature_2m_max[i],
                     dailyWeather.temperature_2m_min[i]
                 ];
