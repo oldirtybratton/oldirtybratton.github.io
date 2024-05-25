@@ -332,18 +332,31 @@ function fetchWeather() {
         }
     });
     
-    function fetchSportsScores() {
+async function fetchSportsScores() {
     const today = new Date().toISOString().split('T')[0]; // Get current date in YYYY-MM-DD format
-    const apiUrl = `https://www.thesportsdb.com/api/v1/json/1/eventsday.php?d=${today}`;
+    const apiUrl = `https://sportscore1.p.rapidapi.com/sports/1/events/date/${today}?page=1`;
+    const options = {
+        method: 'GET',
+        headers: {
+            'X-RapidAPI-Host': 'sportscore1.p.rapidapi.com',
+            'X-RapidAPI-Key': 'c6e7eaa640msh7cd96acdd9fb43dp195daejsn8792d8bfb1be' // Replace with your actual RapidAPI key
+        }
+    };
 
-    fetch(apiUrl)
+    fetch(apiUrl, options)
         .then(response => response.json())
         .then(data => {
-            if (!data.events) {
+            if (!data.data || data.data.length === 0) {
                 throw new Error("No events found for today.");
             }
-            const events = data.events;
-            const scores = events.map(event => `${event.strEvent}: ${event.intHomeScore || 0} - ${event.intAwayScore || 0}`).join('\n');
+            const events = data.data;
+            const scores = events.map(event => {
+                const homeTeam = event.home_team.name;
+                const awayTeam = event.away_team.name;
+                const homeScore = event.home_score.current || 0;
+                const awayScore = event.away_score.current || 0;
+                return `${homeTeam} vs ${awayTeam}: ${homeScore} - ${awayScore}`;
+            }).join('\n');
             fetchAsciiArt('sports_scores.txt').then(() => {
                 const resultDiv = document.createElement('div');
                 resultDiv.classList.add('output');
