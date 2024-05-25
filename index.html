@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zsh Terminal</title>
+    <title>terminal</title>
     <style>
         body {
             background-color: #1d1f21;
@@ -93,7 +93,7 @@
 
             editorInput.addEventListener('keydown', (event) => {
                 if (event.key === 'Escape' || (event.key === 'q' && event.shiftKey)) {
-                    if (editorInput.value.trim() === ':q') {
+                    if (editorInput.value.trim().endsWith(':q')) {
                         exitEditor();
                     }
                 }
@@ -111,19 +111,16 @@
 
                 switch (command) {
                     case 'whoami':
-                        result = 'user';
+                        result = 'Caleb Bratton';
                         break;
                     case 'ls':
-                        result = 'file1.txt file2.txt';
+                        result = 'resume.txt';
                         break;
                     case 'sh bratton.sh':
                         result = 'Executing bratton.sh... Done!';
                         break;
-                    case 'vim file1.txt':
-                        openEditor('file1.txt');
-                        return;
-                    case 'vim file2.txt':
-                        openEditor('file2.txt');
+                    case 'vim resume.txt':
+                        fetchResume();
                         return;
                     default:
                         result = `${command}: command not found`;
@@ -134,12 +131,25 @@
                 terminal.scrollTop = terminal.scrollHeight;
             }
 
-            function openEditor(filename) {
+            function fetchResume() {
+                fetch('resume.txt')
+                    .then(response => response.text())
+                    .then(text => openEditor(text))
+                    .catch(error => {
+                        const resultDiv = document.createElement('div');
+                        resultDiv.classList.add('output');
+                        resultDiv.textContent = `Error loading resume: ${error}`;
+                        terminal.insertBefore(resultDiv, terminal.lastElementChild);
+                    });
+            }
+
+            function openEditor(content) {
                 editor.style.display = 'block';
                 terminal.style.display = 'none';
                 inEditor = true;
                 editorInput.focus();
-                editorInput.value = `# ${filename}\n\nType :q to quit.`;
+                editorInput.value = content.trim();
+                editorInput.setSelectionRange(0, 0); // Place cursor at the beginning
             }
 
             function exitEditor() {
