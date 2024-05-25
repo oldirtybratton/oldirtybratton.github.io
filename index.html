@@ -24,6 +24,8 @@
         }
         .prompt {
             color: #7aa2f7;
+            display: inline;
+            width: min-content;
         }
         .output {
             color: #c0caf5;
@@ -80,7 +82,7 @@
     <div id="terminal">
         <div class="output">welcome to my terminal</div>
         <div class="input-line">
-            <div class="prompt">user@zsh:~$</div>
+            <span class="prompt">user@zsh:~$</span>
             <input type="text" id="input" autofocus>
         </div>
     </div>
