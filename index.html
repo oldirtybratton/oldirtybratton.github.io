@@ -106,7 +106,7 @@
             });
 
             editorInput.addEventListener('keydown', (event) => {
-                if (event.key === 'Escape' || (event.key === 'q' && event.shiftKey)) {
+                if (event.key === 'Escape' || (event.key === 'q' && inEditor)) {
                     if (editorInput.value.trim().endsWith(':q')) {
                         exitEditor();
                     }
