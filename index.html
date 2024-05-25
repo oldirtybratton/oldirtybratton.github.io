@@ -195,86 +195,125 @@
                 return 'unknown';
             }
 
-            async function fetchWeatherApi(url, params) {
-                const queryString = new URLSearchParams(params).toString();
-                const response = await fetch(`${url}?${queryString}`);
-                const data = await response.json();
-                return data;
+  async function fetchWeatherApi(url, params) {
+    const queryString = new URLSearchParams(params).toString();
+    const response = await fetch(`${url}?${queryString}`);
+    const data = await response.json();
+    return data;
+}
+
+function fetchWeather() {
+    const params = {
+        latitude: 39.7392,
+        longitude: -104.9847,
+        current_weather: true,
+        hourly: ['temperature_2m', 'precipitation_probability', 'precipitation'],
+        daily: ['temperature_2m_max', 'temperature_2m_min'],
+        temperature_unit: 'fahrenheit',
+        wind_speed_unit: 'mph',
+        precipitation_unit: 'inch',
+        timezone: 'America/Denver'
+    };
+
+    fetchWeatherApi('https://api.open-meteo.com/v1/forecast', params)
+    .then(data => {
+        const currentWeather = data.current_weather;
+        const dailyWeather = data.daily;
+        const weatherCode = currentWeather.weathercode;
+        const weatherConditionFile = getWeatherCondition(weatherCode);
+
+        fetchAsciiArt(weatherConditionFile).then(() => {
+            const resultDiv = document.createElement('div');
+            resultDiv.classList.add('output');
+
+            // Create a table for displaying the current weather data
+            const currentTable = document.createElement('table');
+            currentTable.style.width = '100%';
+            currentTable.style.borderCollapse = 'collapse';
+
+            // Add table headers for current weather
+            const currentHeaders = ['Time', 'Temperature (°F)', 'Rain (in)', 'Cloud Cover (%)'];
+            const currentHeaderRow = document.createElement('tr');
+            currentHeaders.forEach(header => {
+                const th = document.createElement('th');
+                th.textContent = header;
+                th.style.border = '1px solid #3b4261';
+                th.style.padding = '8px';
+                th.style.textAlign = 'left';
+                currentHeaderRow.appendChild(th);
+            });
+            currentTable.appendChild(currentHeaderRow);
+
+            // Add current weather data
+            const currentRow = document.createElement('tr');
+            const currentData = [
+                new Date(currentWeather.time * 1000).toLocaleTimeString(),
+                currentWeather.temperature,
+                currentWeather.rain,
+                currentWeather.cloud_cover
+            ];
+            currentData.forEach(data => {
+                const td = document.createElement('td');
+                td.textContent = data;
+                td.style.border = '1px solid #3b4261';
+                td.style.padding = '8px';
+                currentRow.appendChild(td);
+            });
+            currentTable.appendChild(currentRow);
+
+            // Create a table for displaying the 7-day forecast
+            const forecastTable = document.createElement('table');
+            forecastTable.style.width = '100%';
+            forecastTable.style.borderCollapse = 'collapse';
+            forecastTable.style.marginTop = '20px';
+
+            // Add table headers for 7-day forecast
+            const forecastHeaders = ['Date', 'Max Temperature (°F)', 'Min Temperature (°F)'];
+            const forecastHeaderRow = document.createElement('tr');
+            forecastHeaders.forEach(header => {
+                const th = document.createElement('th');
+                th.textContent = header;
+                th.style.border = '1px solid #3b4261';
+                th.style.padding = '8px';
+                th.style.textAlign = 'left';
+                forecastHeaderRow.appendChild(th);
+            });
+            forecastTable.appendChild(forecastHeaderRow);
+
+            // Add 7-day forecast data
+            for (let i = 0; i < dailyWeather.time.length; i++) {
+                const forecastRow = document.createElement('tr');
+                const forecastData = [
+                    new Date(dailyWeather.time[i] * 1000).toLocaleDateString(),
+                    dailyWeather.temperature_2m_max[i],
+                    dailyWeather.temperature_2m_min[i]
+                ];
+                forecastData.forEach(data => {
+                    const td = document.createElement('td');
+                    td.textContent = data;
+                    td.style.border = '1px solid #3b4261';
+                    td.style.padding = '8px';
+                    forecastRow.appendChild(td);
+                });
+                forecastTable.appendChild(forecastRow);
             }
 
-            function fetchWeather() {
-                const params = {
-                    latitude: 39.7392,
-                    longitude: -104.9847,
-                    current_weather: true,
-                    hourly: ['temperature_2m', 'precipitation_probability', 'precipitation'],
-                    daily: ['temperature_2m_max', 'temperature_2m_min'],
-                    temperature_unit: 'fahrenheit',
-                    wind_speed_unit: 'mph',
-                    precipitation_unit: 'inch',
-                    timezone: 'America/Denver'
-                };
+            // Add the current weather table and the 7-day forecast table to the resultDiv
+            resultDiv.appendChild(currentTable);
+            resultDiv.appendChild(forecastTable);
 
-                fetchWeatherApi('https://api.open-meteo.com/v1/forecast', params)
-                .then(data => {
-                    const currentWeather = data.current_weather;
-                    const weatherCode = currentWeather.weathercode;
-                    const weatherConditionFile = getWeatherCondition(weatherCode);
-
-                    fetchAsciiArt(weatherConditionFile).then(() => {
-                        const resultDiv = document.createElement('div');
-                        resultDiv.classList.add('output');
-
-                        // Create a table for displaying the weather data
-                        const table = document.createElement('table');
-                        table.style.width = '100%';
-                        table.style.borderCollapse = 'collapse';
-
-                        // Add table headers
-                        const headers = ['Time', 'Temperature (°F)', 'Rain (in)', 'Cloud Cover (%)'];
-                        const headerRow = document.createElement('tr');
-                        headers.forEach(header => {
-                            const th = document.createElement('th');
-                            th.textContent = header;
-                            th.style.border = '1px solid #3b4261';
-                            th.style.padding = '8px';
-                            th.style.textAlign = 'left';
-                            headerRow.appendChild(th);
-                        });
-                        table.appendChild(headerRow);
-
-                        // Add current weather data
-                        const currentRow = document.createElement('tr');
-                        const currentData = [
-                            new Date(currentWeather.time).toLocaleTimeString(),
-                            currentWeather.temperature,
-                            currentWeather.rain,
-                            currentWeather.cloud_cover
-                        ];
-                        currentData.forEach(data => {
-                            const td = document.createElement('td');
-                            td.textContent = data;
-                            td.style.border = '1px solid #3b4261';
-                            td.style.padding = '8px';
-                            currentRow.appendChild(td);
-                        });
-                        table.appendChild(currentRow);
-
-                        // Add the table to the resultDiv
-                        resultDiv.appendChild(table);
-
-                        // Add the resultDiv to the terminal
-                        terminal.insertBefore(resultDiv, terminal.lastElementChild);
-                        terminal.scrollTop = terminal.scrollHeight;
-                    });
-                })
-                .catch(error => {
-                    const resultDiv = document.createElement('div');
-                    resultDiv.classList.add('output');
-                    resultDiv.textContent = `Error fetching weather data: ${error}`;
-                   terminal.insertBefore(resultDiv, terminal.lastElementChild);
-            });
-        }
+            // Add the resultDiv to the terminal
+            terminal.insertBefore(resultDiv, terminal.lastElementChild);
+            terminal.scrollTop = terminal.scrollHeight;
+        });
+    })
+    .catch(error => {
+        const resultDiv = document.createElement('div');
+        resultDiv.classList.add('output');
+        resultDiv.textContent = `Error fetching weather data: ${error.message}`;
+        terminal.insertBefore(resultDiv, terminal.lastElementChild);
+    });
+}
 
         function openEditor(content) {
             editor.style.display = 'block';
