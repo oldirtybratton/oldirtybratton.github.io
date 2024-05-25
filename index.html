@@ -27,7 +27,7 @@
         }
         .output {
             color: #c0caf5;
-            white-space: pre;
+            white-space: pre; /* Preserve whitespace for ASCII art */
         }
         .input-line {
             display: flex;
@@ -58,6 +58,7 @@
             box-sizing: border-box;
         }
 
+        /* Responsive design for mobile */
         @media (max-width: 600px) {
             .input-line {
                 flex-direction: column;
@@ -77,7 +78,7 @@
 </head>
 <body>
     <div id="terminal">
-        <div class="output">Welcome to Zsh Terminal</div>
+        <div class="output">welcome to my terminal</div>
         <div class="input-line">
             <div class="prompt">user@zsh:~$</div>
             <input type="text" id="input" autofocus>
@@ -127,7 +128,7 @@
                         result = 'Caleb Bratton';
                         break;
                     case 'ls':
-                        result = 'resume.txt';
+                        result = 'resume.txt\nbratton.sh\nsports_scores.sh\nweather.sh';
                         break;
                     case 'sh bratton.sh':
                     case './bratton.sh':
@@ -136,6 +137,10 @@
                     case 'sh sports_scores.sh':
                     case './sports_scores.sh':
                         fetchSportsScores();
+                        return;
+                    case 'sh weather.sh':
+                    case './weather.sh':
+                        fetchWeather();
                         return;
                     case 'vim resume.txt':
                         fetchResume();
@@ -180,11 +185,12 @@
             }
 
             function fetchSportsScores() {
-                fetch("https://www.thesportsdb.com/api/v1/json/1/eventsday.php?d=" + date.Now().toISOString.split('T')[0])
+                const today = new Date().toISOString().split('T')[0]; // Get current date in YYYY-MM-DD format
+                fetch(`https://www.thesportsdb.com/api/v1/json/1/eventsday.php?d=${today}`)
                     .then(response => response.json())
                     .then(data => {
-                        const events = data.events;
-                        const scores = events.map(event => `${event.strEvent}: ${event.intHomeScore} - ${event.intAwayScore}`).join('\n');
+                        const events = data.events || [];
+                        const scores = events.map(event => `${event.strEvent}: ${event.intHomeScore || 0} - ${event.intAwayScore || 0}`).join('\n');
                         fetchAsciiArt('sports_scores.txt').then(() => {
                             const resultDiv = document.createElement('div');
                             resultDiv.classList.add('output');
@@ -201,13 +207,36 @@
                     });
             }
 
+            function fetchWeather() {
+                fetch('https://api.open-meteo.com/v1/forecast?latitude=35.6895&longitude=139.6917&hourly=temperature_2m', {
+                    method: 'GET',
+                })
+                .then(response => response.json())
+                .then(data => {
+                    const temperature = data.hourly.temperature_2m[0]; // Just an example, fetching the first temperature data point
+                    fetchAsciiArt('weather_ascii.txt').then(() => {
+                        const resultDiv = document.createElement('div');
+                        resultDiv.classList.add('output');
+                        resultDiv.textContent = `Current Temperature: ${temperature}°C`;
+                        terminal.insertBefore(resultDiv, terminal.lastElementChild);
+                        terminal.scrollTop = terminal.scrollHeight;
+                    });
+                })
+                .catch(error => {
+                    const resultDiv = document.createElement('div');
+                    resultDiv.classList.add('output');
+                    resultDiv.textContent = `Error fetching weather data: ${error}`;
+                    terminal.insertBefore(resultDiv, terminal.lastElementChild);
+                });
+            }
+
             function openEditor(content) {
                 editor.style.display = 'block';
                 terminal.style.display = 'none';
                 inEditor = true;
                 editorInput.focus();
                 editorInput.value = content.trim();
-                editorInput.setSelectionRange(0, 0);
+                editorInput.setSelectionRange(0, 0); // Place cursor at the beginning
             }
 
             function exitEditor() {
