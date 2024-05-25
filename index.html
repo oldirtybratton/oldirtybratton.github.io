@@ -27,7 +27,7 @@
         }
         .output {
             color: #c0caf5;
-            white-space: pre; /* Preserve whitespace for ASCII art */
+            white-space: pre;
         }
         .input-line {
             display: flex;
@@ -58,7 +58,6 @@
             box-sizing: border-box;
         }
 
-        /* Responsive design for mobile */
         @media (max-width: 600px) {
             .input-line {
                 flex-direction: column;
@@ -131,7 +130,12 @@
                         result = 'resume.txt';
                         break;
                     case 'sh bratton.sh':
-                        fetchAsciiArt();
+                    case './bratton.sh':
+                        fetchAsciiArt('ascii_art.txt');
+                        return;
+                    case 'sh sports_scores.sh':
+                    case './sports_scores.sh':
+                        fetchSportsScores();
                         return;
                     case 'vim resume.txt':
                         fetchResume();
@@ -145,8 +149,8 @@
                 terminal.scrollTop = terminal.scrollHeight;
             }
 
-            function fetchAsciiArt() {
-                fetch('ascii_art.txt')
+            function fetchAsciiArt(file) {
+                return fetch(file)
                     .then(response => response.text())
                     .then(text => {
                         const resultDiv = document.createElement('div');
@@ -175,13 +179,35 @@
                     });
             }
 
+            function fetchSportsScores() {
+                fetch("https://www.thesportsdb.com/api/v1/json/1/eventsday.php?d=" + date.Now().toISOString.split('T')[0])
+                    .then(response => response.json())
+                    .then(data => {
+                        const events = data.events;
+                        const scores = events.map(event => `${event.strEvent}: ${event.intHomeScore} - ${event.intAwayScore}`).join('\n');
+                        fetchAsciiArt('sports_scores.txt').then(() => {
+                            const resultDiv = document.createElement('div');
+                            resultDiv.classList.add('output');
+                            resultDiv.textContent = scores;
+                            terminal.insertBefore(resultDiv, terminal.lastElementChild);
+                            terminal.scrollTop = terminal.scrollHeight;
+                        });
+                    })
+                    .catch(error => {
+                        const resultDiv = document.createElement('div');
+                        resultDiv.classList.add('output');
+                        resultDiv.textContent = `Error fetching sports scores: ${error}`;
+                        terminal.insertBefore(resultDiv, terminal.lastElementChild);
+                    });
+            }
+
             function openEditor(content) {
                 editor.style.display = 'block';
                 terminal.style.display = 'none';
                 inEditor = true;
                 editorInput.focus();
                 editorInput.value = content.trim();
-                editorInput.setSelectionRange(0, 0); // Place cursor at the beginning
+                editorInput.setSelectionRange(0, 0);
             }
 
             function exitEditor() {
