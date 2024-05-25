@@ -97,66 +97,6 @@
             const editorInput = document.getElementById('editor-input');
             let inEditor = false;
 
-            const frames = [
-`          _______
-        //  ||\\ \\
-       //___||_\\ \\
-      ||  ___  || 
-      || |___| || 
-      ||_______|| 
-      \\_________/
-       \\_______/
-      _______
-      \\       \\__
-       \\_______( o)__
-        |        (    )__
-        |         (__)
-        |_________|
-`,
-`          _______
-        //  ||\\ \\
-       //___||_\\ \\
-      ||  ___  || 
-      || |___| || 
-      ||_______|| 
-      \\_________/
-       \\_______/
-      _______
-      \\       \\__
-       \\_______( o)_
-        |       (    )_
-        |        (__)
-        |_________|
-`,
-`          _______
-        //  ||\\ \\
-       //___||_\\ \\
-      ||  ___  || 
-      || |___| || 
-      ||_______|| 
-      \\_________/
-       \\_______/
-      _______
-      \\       \\__
-       \\_______( o)_
-        |       (    )_
-        |        (__)
-        |_________|
-`
-            ];
-
-            let currentFrame = 0;
-
-            function animateTyping() {
-                const resultDiv = document.createElement('div');
-                resultDiv.classList.add('output');
-                resultDiv.textContent = frames[currentFrame];
-                terminal.appendChild(resultDiv);
-                terminal.scrollTop = terminal.scrollHeight;
-
-                currentFrame = (currentFrame + 1) % frames.length;
-            }
-
             input.addEventListener('keydown', (event) => {
                 if (event.key === 'Enter') {
                     const command = input.value.trim();
@@ -179,7 +119,8 @@
                 outputDiv.textContent = `user@zsh:~$ ${command}`;
                 terminal.insertBefore(outputDiv, terminal.lastElementChild);
 
-                let resultDiv;
+                const resultDiv = document.createElement('div');
+                resultDiv.classList.add('output');
                 let result;
 
                 switch (command) {
@@ -190,10 +131,7 @@
                         result = 'resume.txt';
                         break;
                     case 'sh bratton.sh':
-                        resultDiv = document.createElement('div');
-                        resultDiv.classList.add('output');
-                        terminal.appendChild(resultDiv);
-                        setInterval(animateTyping, 500);
+                        fetchAsciiArt();
                         return;
                     case 'vim resume.txt':
                         fetchResume();
@@ -202,13 +140,27 @@
                         result = `${command}: command not found`;
                 }
 
-                if (result) {
-                    resultDiv = document.createElement('div');
-                    resultDiv.classList.add('output');
-                    resultDiv.textContent = result;
-                    terminal.insertBefore(resultDiv, terminal.lastElementChild);
-                    terminal.scrollTop = terminal.scrollHeight;
-                }
+                resultDiv.textContent = result;
+                terminal.insertBefore(resultDiv, terminal.lastElementChild);
+                terminal.scrollTop = terminal.scrollHeight;
+            }
+
+            function fetchAsciiArt() {
+                fetch('ascii_art.txt')
+                    .then(response => response.text())
+                    .then(text => {
+                        const resultDiv = document.createElement('div');
+                        resultDiv.classList.add('output');
+                        resultDiv.textContent = text;
+                        terminal.insertBefore(resultDiv, terminal.lastElementChild);
+                        terminal.scrollTop = terminal.scrollHeight;
+                    })
+                    .catch(error => {
+                        const resultDiv = document.createElement('div');
+                        resultDiv.classList.add('output');
+                        resultDiv.textContent = `Error loading ASCII art: ${error}`;
+                        terminal.insertBefore(resultDiv, terminal.lastElementChild);
+                    });
             }
 
             function fetchResume() {
