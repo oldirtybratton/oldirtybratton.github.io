@@ -10,8 +10,6 @@ Knowledgeable: Java, Springboot, React Native, AWS, CI/CD tools, Docker, Redis, 
 PROFESSIONAL EXPERIENCE
 Software Engineer | Flowhub | April 2024 - Current
     • TODO
-		• TODO
-    • TODO
 
 Full Stack Developer | Dish Network | November 2021 - January 2024
     • Developed a proof of concept application, utilizing a WebGL-based framework, effectively reducing build size by 40%.
