@@ -185,13 +185,13 @@
             }
 
             function getWeatherCondition(weatherCode) {
-                if (weatherCode >= 0 && weatherCode <= 3) return 'sun_ascii.txt';
-                if (weatherCode >= 45 && weatherCode <= 48) return 'cloud_ascii.txt';
-                if (weatherCode >= 51 && weatherCode <= 67) return 'rain_ascii.txt';
-                if (weatherCode >= 80 && weatherCode <= 82) return 'rain_ascii.txt';
-                if (weatherCode >= 95 && weatherCode <= 99) return 'storm_ascii.txt';
-                if (weatherCode >= 2 && weatherCode <= 3) return 'partly_cloud_ascii.txt';
-                if (weatherCode >= 45 && weatherCode <= 48) return 'cloud_ascii.txt';
+                if (weatherCode >= 0 && weatherCode <= 3) return 'sun.txt';
+                if (weatherCode >= 45 && weatherCode <= 48) return 'cloud.txt';
+                if (weatherCode >= 51 && weatherCode <= 67) return 'rain.txt';
+                if (weatherCode >= 80 && weatherCode <= 82) return 'rain.txt';
+                if (weatherCode >= 95 && weatherCode <= 99) return 'storm.txt';
+                if (weatherCode >= 2 && weatherCode <= 3) return 'partly.txt';
+                if (weatherCode >= 45 && weatherCode <= 48) return 'cloud.txt';
                 return 'unknown';
             }
 
@@ -216,7 +216,6 @@ function fetchWeather() {
 };
     fetchWeatherApi('https://api.open-meteo.com/v1/forecast', params)
     .then(data => {
-        console.log(data)
         const currentWeather = data.current;
         const dailyWeather = data.daily;
         const weatherCode = currentWeather.weather_code;
