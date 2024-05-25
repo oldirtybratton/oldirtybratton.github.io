@@ -1,0 +1,45 @@
+Caleb Bratton
+Denver, CO | bratton.dev@gmail.com
+linkedin.com/in/calebabratton | github.com/calebbratton | bratton.sh
+(Open to Remote/Relocation)
+
+TECHNICAL SKILLS
+Skilled: Go, JavaScript, React, SQL, MongoDB, HTML5, CSS, Unit/Integration Testing
+Knowledgeable: Java, Springboot, React Native, AWS, CI/CD tools, Docker, Redis, Kafka
+
+PROFESSIONAL EXPERIENCE
+Software Engineer | Flowhub | April 2024 - Current
+    • TODO
+		• TODO
+    • TODO
+
+Full Stack Developer | Dish Network | November 2021 - January 2024
+    • Developed a proof of concept application, utilizing a WebGL-based framework, effectively reducing build size by 40%.
+    • Engineered a serverless, event-based API using Golang, AWS Lambda, Kafka, and MongoDB to achieve scalability and responsiveness.
+    • Constructed a comprehensive unit testing suite, incorporating mocks for thorough testing of all Golang services, maintaining a minimum code coverage of 75%.
+    • Designed and developed a dynamic business console using React, Next.js, and Apache ECharts, facilitating data-driven decision-making through intuitive visualization of marketing data.
+    • Crafted a React Native UI in alignment with product wireframes, ensuring a seamless integration with Agile workflows.
+    • Implemented RestAssured and Mockito for integration and unit testing throughout multiple Java microservices, achieving and surpassing 80% code coverage to ensure code quality.
+    • Diagnosed and resolved production issues across multiple Golang gRPC microservices, ensuring seamless system operation.
+
+ENGINEERING PROJECTS
+Altitude Apparel | A front-end web page capable of dynamically rendering millions of products.
+(React, Javascript, Bootstrap, Axios, Node.js/Express, HTML/CSS, Jest, React Testing Library)
+    • Designed a visually pleasing and highly functional product information page styled with Bootstrap.
+    • Retrieved and manipulated complex data from API and dynamically rendering using React.
+    • Utilized Asana to maintain an agile workflow combined with daily stand-ups to stay on track.
+
+System Design and Optimization | An optimized API service of millions of products with complex queries and several tables of data created from CSV files. (PostgreSQL, Node.js/Express, Docker, AWS, K6)
+    • Generated and seeded PostgreSQL with ~10 million records and optimized queries to take < 2ms.
+    • Tested single instance with K6 and achieved around 1000 requests per second with < 50ms response.
+    • Deployed application using a microservice architecture on AWS.
+
+clhi | A current work in progress. Developing a gRPC based instant messaging application for the terminal.
+(Golang, gRPC, Cobra CLI, AWS)
+    • Implemented a gRPC chat server allowing users to join a group chat and stream messages.
+    • Worked with Cobra CLI to create a nice user experience from the command line.
+    • Deployed chat server to AWS for testing with multiple remote users.
+
+EDUCATION
+Western Governors University | Computer Science | 2024
+Hack Reactor | Software Engineering Immersive Program | 2021
