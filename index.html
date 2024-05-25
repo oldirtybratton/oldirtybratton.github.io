@@ -191,7 +191,7 @@
                     .then(data => {
                         const events = data.events || [];
                         const scores = events.map(event => `${event.strEvent}: ${event.intHomeScore || 0} - ${event.intAwayScore || 0}`).join('\n');
-                        fetchAsciiArt('sports_scores.txt').then(() => {
+                        fetchAsciiArt('sports_ascii.txt').then(() => {
                             const resultDiv = document.createElement('div');
                             resultDiv.classList.add('output');
                             resultDiv.textContent = scores;
