@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zsh Terminal</title>
+    <title>bratton.sh</title>
     <style>
         body {
             background-color: #1a1b26;
@@ -78,7 +78,7 @@
 </head>
 <body>
     <div id="terminal">
-        <div class="output">Welcome to Zsh Terminal</div>
+        <div class="output">welcome to my terminal</div>
         <div class="input-line">
             <div class="prompt">user@zsh:~$</div>
             <input type="text" id="input" autofocus>
@@ -128,14 +128,14 @@
                         result = 'Caleb Bratton';
                         break;
                     case 'ls':
-                        result = 'resume.txt\nbratton.sh\nsports_scores.sh\nweather.sh';
+                        result = 'resume.txt\nbratton.sh\nsports.sh\nweather.sh';
                         break;
                     case 'sh bratton.sh':
                     case './bratton.sh':
                         fetchAsciiArt('ascii_art.txt');
                         return;
-                    case 'sh sports_scores.sh':
-                    case './sports_scores.sh':
+                    case 'sh sports.sh':
+                    case './sports.sh':
                         fetchSportsScores();
                         return;
                     case 'sh weather.sh':
