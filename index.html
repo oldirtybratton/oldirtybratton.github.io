@@ -85,7 +85,7 @@
         </div>
     </div>
 
-    <div id="editor">
+    <div id="editor" display="hidden">
         <textarea id="editor-input"></textarea>
     </div>
 
@@ -355,6 +355,7 @@ function fetchWeather() {
 
         function exitEditor() {
             editor.style.display = 'none';
+            editor.style.display = 'hidden';
             terminal.style.display = 'block';
             inEditor = false;
             input.focus();
