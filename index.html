@@ -36,7 +36,7 @@
             flex-wrap: wrap;
         }
         .input-line .prompt {
-            margin-right: 10px;
+            margin-right: 0px;
             flex: 1 0 auto;
         }
         .input-line input {
@@ -80,14 +80,14 @@
 </head>
 <body>
     <div id="terminal">
-        <div class="output">welcome to my terminal</div>
+        <div class="output">welcome to bratton.sh</div>
         <div class="input-line">
             <span class="prompt">user@zsh:~$</span>
             <input type="text" id="input" autofocus>
         </div>
     </div>
 
-    <div id="editor" display="hidden">
+    <div id="editor">
         <textarea id="editor-input"></textarea>
     </div>
 
@@ -191,7 +191,7 @@
                 if (weatherCode >= 45 && weatherCode <= 48) return 'cloud_ascii.txt';
                 if (weatherCode >= 51 && weatherCode <= 67) return 'rain_ascii.txt';
                 if (weatherCode >= 80 && weatherCode <= 82) return 'rain_ascii.txt';
-                if (weatherCode >= 95 && weatherCode <= 99) return 'rain_ascii.txt';
+                if (weatherCode >= 95 && weatherCode <= 99) return 'storm_ascii.txt';
                 if (weatherCode >= 2 && weatherCode <= 3) return 'partly_cloud_ascii.txt';
                 if (weatherCode >= 45 && weatherCode <= 48) return 'cloud_ascii.txt';
                 return 'unknown';
@@ -205,23 +205,23 @@
 }
 
 function fetchWeather() {
-    const params = {
-        latitude: 39.7392,
-        longitude: -104.9847,
-        current_weather: true,
-        hourly: ['temperature_2m', 'precipitation_probability', 'precipitation'],
-        daily: ['temperature_2m_max', 'temperature_2m_min'],
-        temperature_unit: 'fahrenheit',
-        wind_speed_unit: 'mph',
-        precipitation_unit: 'inch',
-        timezone: 'America/Denver'
-    };
 
+    const params = {
+	"latitude": 39.7392,
+	"longitude": -104.9847,
+	"current": ["temperature_2m", "relative_humidity_2m", "precipitation", "rain", "showers", "snowfall", "weather_code", "cloud_cover", "wind_speed_10m"],
+	"daily": ["weather_code", "temperature_2m_max", "temperature_2m_min", "precipitation_sum", "rain_sum", "showers_sum", "snowfall_sum", "precipitation_probability_max", "wind_speed_10m_max"],
+	"temperature_unit": "fahrenheit",
+	"wind_speed_unit": "mph",
+	"precipitation_unit": "inch",
+	"timezone": "America/Denver"
+};
     fetchWeatherApi('https://api.open-meteo.com/v1/forecast', params)
     .then(data => {
-        const currentWeather = data.current_weather;
+        console.log(data)
+        const currentWeather = data.current;
         const dailyWeather = data.daily;
-        const weatherCode = currentWeather.weathercode;
+        const weatherCode = currentWeather.weather_code;
         const weatherConditionFile = getWeatherCondition(weatherCode);
 
         fetchAsciiArt(weatherConditionFile).then(() => {
@@ -234,7 +234,7 @@ function fetchWeather() {
             currentTable.style.borderCollapse = 'collapse';
 
             // Add table headers for current weather
-            const currentHeaders = ['Time', 'Temperature (°F)', 'Rain (in)', 'Cloud Cover (%)'];
+            const currentHeaders = ['Time', 'Current (°F)', 'High (°F)', 'Low (°F)',  'Rain (in)', 'Cloud Cover (%)'];
             const currentHeaderRow = document.createElement('tr');
             currentHeaders.forEach(header => {
                 const th = document.createElement('th');
@@ -249,8 +249,10 @@ function fetchWeather() {
             // Add current weather data
             const currentRow = document.createElement('tr');
             const currentData = [
-                currentWeather.time.toLocaleTimeString(),
-                currentWeather.temperature,
+                new Date(currentWeather.time).toLocaleTimeString(),
+                currentWeather.temperature_2m,
+                dailyWeather.temperature_2m_max[0],
+                dailyWeather.temperature_2m_min[0],
                 currentWeather.rain,
                 currentWeather.cloud_cover
             ];
@@ -286,7 +288,7 @@ function fetchWeather() {
             for (let i = 0; i < dailyWeather.time.length; i++) {
                 const forecastRow = document.createElement('tr');
                 const forecastData = [
-                    dailyWeather.time[i].toLocaleDateString(),
+                    dailyWeather.time[i],
                     dailyWeather.temperature_2m_max[i],
                     dailyWeather.temperature_2m_min[i]
                 ];
@@ -363,47 +365,6 @@ function fetchWeather() {
             input.focus();
         }
     });
-    
-async function fetchSportsScores() {
-    const today = new Date().toISOString().split('T')[0]; // Get current date in YYYY-MM-DD format
-    const apiUrl = `https://sportscore1.p.rapidapi.com/sports/1/events/date/${today}?page=1`;
-    const options = {
-        method: 'GET',
-        headers: {
-            'X-RapidAPI-Host': 'sportscore1.p.rapidapi.com',
-            'X-RapidAPI-Key': 'c6e7eaa640msh7cd96acdd9fb43dp195daejsn8792d8bfb1be' // Replace with your actual RapidAPI key
-        }
-    };
-
-    fetch(apiUrl, options)
-        .then(response => response.json())
-        .then(data => {
-            if (!data.data || data.data.length === 0) {
-                throw new Error("No events found for today.");
-            }
-            const events = data.data;
-            const scores = events.map(event => {
-                const homeTeam = event.home_team.name;
-                const awayTeam = event.away_team.name;
-                const homeScore = event.home_score.current || 0;
-                const awayScore = event.away_score.current || 0;
-                return `${homeTeam} vs ${awayTeam}: ${homeScore} - ${awayScore}`;
-            }).join('\n');
-            fetchAsciiArt('sports_scores.txt').then(() => {
-                const resultDiv = document.createElement('div');
-                resultDiv.classList.add('output');
-                resultDiv.textContent = scores;
-                terminal.insertBefore(resultDiv, terminal.lastElementChild);
-                terminal.scrollTop = terminal.scrollHeight;
-            });
-        })
-        .catch(error => {
-            const resultDiv = document.createElement('div');
-            resultDiv.classList.add('output');
-            resultDiv.textContent = `Error fetching sports scores: ${error.message}`;
-            terminal.insertBefore(resultDiv, terminal.lastElementChild);
-        });
-}
 </script>
 </body>
 </html>
