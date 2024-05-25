@@ -316,13 +316,42 @@ function fetchWeather() {
 }
 
         function openEditor(content) {
-            editor.style.display = 'block';
-            terminal.style.display = 'none';
-            inEditor = true;
-            editorInput.focus();
-            editorInput.value = content.trim();
-            editorInput.setSelectionRange(0, 0); // Place cursor at the beginning
+    // Make editor read-only
+    editorInput.setAttribute('readonly', true);
+
+    // Set editor content
+    editor.style.display = 'block';
+    terminal.style.display = 'none';
+    inEditor = true;
+    editorInput.value = content.trim();
+    editorInput.setSelectionRange(0, 0); // Place cursor at the beginning
+
+    // Focus on editor input
+    editorInput.focus();
+
+    // Function to handle keydown event
+    function handleKeyDown(event) {
+        // If Enter key is pressed
+        if (event.key === 'Enter') {
+            event.preventDefault(); // Prevent default behavior
+            // Get command from input value
+            var command = editorInput.value.trim();
+            // Handle the command
+            handleCommand(command);
         }
+    }
+
+    // Add event listener for keydown event
+    editorInput.addEventListener('keydown', handleKeyDown);
+
+    // Function to handle commands
+    function handleCommand(command) {
+        // Your command handling logic here
+        console.log("Command entered:", command);
+        // Clear editor input
+        editorInput.value = '';
+    }
+}
 
         function exitEditor() {
             editor.style.display = 'none';
