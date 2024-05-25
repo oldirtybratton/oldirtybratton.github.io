@@ -331,6 +331,34 @@ function fetchWeather() {
             input.focus();
         }
     });
+    
+    function fetchSportsScores() {
+    const today = new Date().toISOString().split('T')[0]; // Get current date in YYYY-MM-DD format
+    const apiUrl = `https://www.thesportsdb.com/api/v1/json/1/eventsday.php?d=${today}`;
+
+    fetch(apiUrl)
+        .then(response => response.json())
+        .then(data => {
+            if (!data.events) {
+                throw new Error("No events found for today.");
+            }
+            const events = data.events;
+            const scores = events.map(event => `${event.strEvent}: ${event.intHomeScore || 0} - ${event.intAwayScore || 0}`).join('\n');
+            fetchAsciiArt('sports_scores.txt').then(() => {
+                const resultDiv = document.createElement('div');
+                resultDiv.classList.add('output');
+                resultDiv.textContent = scores;
+                terminal.insertBefore(resultDiv, terminal.lastElementChild);
+                terminal.scrollTop = terminal.scrollHeight;
+            });
+        })
+        .catch(error => {
+            const resultDiv = document.createElement('div');
+            resultDiv.classList.add('output');
+            resultDiv.textContent = `Error fetching sports scores: ${error.message}`;
+            terminal.insertBefore(resultDiv, terminal.lastElementChild);
+        });
+}
 </script>
 </body>
 </html>
