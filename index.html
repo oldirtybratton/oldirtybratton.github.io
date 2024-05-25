@@ -3,62 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>terminal</title>
+    <title>Zsh Terminal</title>
     <style>
         body {
-            background-color: #1d1f21;
-            color: #c5c8c6;
+            background-color: #1a1b26;
+            color: #c0caf5;
             font-family: monospace;
-            padding: 20px;
+            padding: 10px;
+            margin: 0;
         }
-        #terminal {
+        #terminal, #editor {
             width: 100%;
-            height: 90vh;
-            background-color: #1d1f21;
-            color: #c5c8c6;
-            padding: 20px;
-            border: 1px solid #c5c8c6;
+            height: calc(100vh - 20px);
+            background-color: #1a1b26;
+            color: #c0caf5;
+            padding: 10px;
+            border: 1px solid #3b4261;
             overflow-y: auto;
-        }
-        #editor {
-            display: none;
-            width: 100%;
-            height: 90vh;
-            background-color: #1d1f21;
-            color: #c5c8c6;
-            padding: 20px;
-            border: 1px solid #c5c8c6;
-            overflow-y: auto;
+            box-sizing: border-box;
         }
         .prompt {
-            color: #b5bd68;
+            color: #7aa2f7;
         }
         .output {
-            color: #c5c8c6;
+            color: #c0caf5;
         }
         .input-line {
             display: flex;
+            flex-wrap: wrap;
         }
         .input-line .prompt {
             margin-right: 10px;
+            flex: 1 0 auto;
         }
         .input-line input {
             background: none;
             border: none;
-            color: #c5c8c6;
-            flex: 1;
+            color: #c0caf5;
+            flex: 2 1 auto;
             font-family: monospace;
             outline: none;
+            min-width: 100px;
         }
         #editor-input {
             width: 100%;
             height: 100%;
             background: none;
             border: none;
-            color: #c5c8c6;
+            color: #c0caf5;
             font-family: monospace;
             outline: none;
             resize: none;
+            box-sizing: border-box;
+        }
+
+        /* Responsive design for mobile */
+        @media (max-width: 600px) {
+            .input-line {
+                flex-direction: column;
+            }
+            .input-line .prompt {
+                margin-right: 0;
+                margin-bottom: 5px;
+                width: 100%;
+                text-align: left;
+            }
+            .input-line input {
+                width: 100%;
+                min-width: 0;
+            }
         }
     </style>
 </head>
@@ -82,6 +95,17 @@
             const editor = document.getElementById('editor');
             const editorInput = document.getElementById('editor-input');
             let inEditor = false;
+
+            const asciiArt = `
+               __
+             _|__|_
+            ( o_o )
+            | :::: |
+            |_|__|_|
+            /  _  \\
+           //|/\\.\\\\
+          (/ _|_ \ )
+            `;
 
             input.addEventListener('keydown', (event) => {
                 if (event.key === 'Enter') {
@@ -117,7 +141,7 @@
                         result = 'resume.txt';
                         break;
                     case 'sh bratton.sh':
-                        result = 'Executing bratton.sh... Done!';
+                        result = asciiArt;
                         break;
                     case 'vim resume.txt':
                         fetchResume();
