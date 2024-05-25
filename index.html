@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zsh Terminal</title>
+    <style>
+        body {
+            background-color: #1d1f21;
+            color: #c5c8c6;
+            font-family: monospace;
+            padding: 20px;
+        }
+        #terminal {
+            width: 100%;
+            height: 90vh;
+            background-color: #1d1f21;
+            color: #c5c8c6;
+            padding: 20px;
+            border: 1px solid #c5c8c6;
+            overflow-y: auto;
+        }
+        #editor {
+            display: none;
+            width: 100%;
+            height: 90vh;
+            background-color: #1d1f21;
+            color: #c5c8c6;
+            padding: 20px;
+            border: 1px solid #c5c8c6;
+            overflow-y: auto;
+        }
+        .prompt {
+            color: #b5bd68;
+        }
+        .output {
+            color: #c5c8c6;
+        }
+        .input-line {
+            display: flex;
+        }
+        .input-line .prompt {
+            margin-right: 10px;
+        }
+        .input-line input {
+            background: none;
+            border: none;
+            color: #c5c8c6;
+            flex: 1;
+            font-family: monospace;
+            outline: none;
+        }
+        #editor-input {
+            width: 100%;
+            height: 100%;
+            background: none;
+            border: none;
+            color: #c5c8c6;
+            font-family: monospace;
+            outline: none;
+            resize: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="terminal">
+        <div class="output">Welcome to Zsh Terminal</div>
+        <div class="input-line">
+            <div class="prompt">user@zsh:~$</div>
+            <input type="text" id="input" autofocus>
+        </div>
+    </div>
+
+    <div id="editor">
+        <textarea id="editor-input"></textarea>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const terminal = document.getElementById('terminal');
+            const input = document.getElementById('input');
+            const editor = document.getElementById('editor');
+            const editorInput = document.getElementById('editor-input');
+            let inEditor = false;
+
+            input.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter') {
+                    const command = input.value.trim();
+                    processCommand(command);
+                    input.value = '';
+                }
+            });
+
+            editorInput.addEventListener('keydown', (event) => {
+                if (event.key === 'Escape' || (event.key === 'q' && event.shiftKey)) {
+                    if (editorInput.value.trim() === ':q') {
+                        exitEditor();
+                    }
+                }
+            });
+
+            function processCommand(command) {
+                const outputDiv = document.createElement('div');
+                outputDiv.classList.add('output');
+                outputDiv.textContent = `user@zsh:~$ ${command}`;
+                terminal.insertBefore(outputDiv, terminal.lastElementChild);
+
+                const resultDiv = document.createElement('div');
+                resultDiv.classList.add('output');
+                let result;
+
+                switch (command) {
+                    case 'whoami':
+                        result = 'user';
+                        break;
+                    case 'ls':
+                        result = 'file1.txt file2.txt';
+                        break;
+                    case 'sh bratton.sh':
+                        result = 'Executing bratton.sh... Done!';
+                        break;
+                    case 'vim file1.txt':
+                        openEditor('file1.txt');
+                        return;
+                    case 'vim file2.txt':
+                        openEditor('file2.txt');
+                        return;
+                    default:
+                        result = `${command}: command not found`;
+                }
+
+                resultDiv.textContent = result;
+                terminal.insertBefore(resultDiv, terminal.lastElementChild);
+                terminal.scrollTop = terminal.scrollHeight;
+            }
+
+            function openEditor(filename) {
+                editor.style.display = 'block';
+                terminal.style.display = 'none';
+                inEditor = true;
+                editorInput.focus();
+                editorInput.value = `# ${filename}\n\nType :q to quit.`;
+            }
+
+            function exitEditor() {
+                editor.style.display = 'none';
+                terminal.style.display = 'block';
+                inEditor = false;
+                input.focus();
+            }
+        });
+    </script>
+</body>
+</html>
